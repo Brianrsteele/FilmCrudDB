@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<section class="m-5" id="processes_table">
+  <div class="container m-5">
+    <h1>Processes</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Process Name</th>
+            <th scope="col">URL</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for process in process_info %}
+          <tr>
+            <td>{{ process[0] }}</td>
+            <td><a href="{{ process[1] }}">{{ process[1] }}</a></td>
+          </tr>
+            {% endfor %}
+          
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% endblock %}

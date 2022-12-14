@@ -1,0 +1,5 @@
+# ignore all files in docs/out/
+docs/out/
+
+# ignore plantUML files in docs/plantUML Files
+docs/plantUML_Files/

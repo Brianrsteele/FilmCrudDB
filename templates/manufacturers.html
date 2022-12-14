@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<section class="m-5" id="manufacturer_table">
+  <div class="container m-5">
+    <h1>Manufacturers</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Manufacturer Name</th>
+            <th scope="col">URL</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for manufacturer in manufacturers_info %}
+          <tr>
+            <td>{{ manufacturer[0] }}</td>
+            <td><a href="{{ manufacturer[1] }}">{{ manufacturer[1] }}</a></td>
+          </tr>
+            {% endfor %}
+          
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% endblock %}

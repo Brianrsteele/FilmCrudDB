@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<section class="m-5" id="film_table">
+    <div class="container m-5">
+      <h1>Film</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Manufacturer</th>
+            <th scope="col">Film Name</th>
+            <th scope="col">ISO</th>
+            <th scope="col">Process</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for film in film_info %}
+          <tr>
+            <td>{{ film[0] }}</td>
+            {% if not film[4] %}
+            <td>{{ film[1] }}</td>
+            {% else %}
+            <td><a href="{{ film[4] }}">{{ film[1] }}</a></td>
+            {% endif %}
+            <td>{{ film[2] }}</td>
+            <td>{{ film[3] }} 
+              
+            </td>
+          </tr>
+            {% endfor %}
+          
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% endblock %}
