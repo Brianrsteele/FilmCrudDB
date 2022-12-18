@@ -9,3 +9,6 @@ docs/plantUML_Files/
 
 # ignore pycache files
 *.pyc
+
+# ignore .gitignore
+.gitignore
