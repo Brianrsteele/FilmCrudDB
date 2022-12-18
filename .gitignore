@@ -1,5 +1,11 @@
 # ignore all files in docs/out/
 docs/out/
 
+# ignore .DS_Store
+.DS_Store
+
 # ignore plantUML files in docs/plantUML Files
 docs/plantUML_Files/
+
+# ignore pycache files
+*.pyc
