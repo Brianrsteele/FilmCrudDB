@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<!-- Content -->
+
+<section class="m-5" id="add_process">
+  <div class="container m-5">
+    <form action="{{ url_for('add_process') }}" method="post">
+      <div class="mb-3">
+        <label for="Process_name" class="form-label">Process Name</label>
+        <input type="text" class="form-control" id="process_name" name="process_name" aria-describedby="process_name">
+      </div>
+      <div class="mb-3">
+        <label for="process_wiki_url" class="form-label">Process Wikipedia Page</label>
+        <input type="text" class="form-control" id="process_wiki_url" name="process_wiki_url"
+          aria-describedby="process_wiki_url">
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

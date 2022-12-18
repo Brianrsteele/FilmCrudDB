@@ -2,26 +2,35 @@
 
 {% block body %}
 
-<section class="m-5" id="processes_table">
-  <div class="container m-5">
-    <h1>Processes</h1>
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Process Name</th>
-            <th scope="col">URL</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for process in process_info %}
-          <tr>
-            <td>{{ process[0] }}</td>
-            <td><a href="{{ process[1] }}">{{ process[1] }}</a></td>
-          </tr>
-            {% endfor %}
-          
-        </tbody>
-      </table>
-    </div>
-  </section>
+<section class="m-5" id="manufacturer_table">
+<div class="container m-5 justify-content-center">
+  <h1>Processes</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Process Name</th>
+        <th scope="col">Edit/Delete</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for process in process_info %}
+      <tr>
+        <td><a href="{{ process[1] }}">{{ process[0] }}</a></td>
+        <td><a class="btn btn-outline-primary" href="#" role="button">Edit</a>
+          <a class="btn btn-outline-danger" href="#" role="button">Delete</a></td>
+      </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
+</div>
+<div class="container col-6">
+  <div class="row justify-content-center">
+    <div class="col-6">
+    <a class="btn btn-outline-primary" href="{{ url_for('add_process') }}" role="button">Add Process</a>
+  </div>
+  </div>
+</div>
+</section>
   {% endblock %}

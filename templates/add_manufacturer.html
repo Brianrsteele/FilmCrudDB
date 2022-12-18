@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<!-- Content -->
+
+<section class="m-5" id="add_manufacturer">
+  <div class="container m-5">
+    <form action="{{ url_for('add_manufacturer') }}" method="post">
+      <div class="mb-3">
+        <label for="manufacturer_name" class="form-label">Manufacturer Name</label>
+        <input type="text" class="form-control" id="manufacturer_name" name="manufacturer_name" aria-describedby="manufacturer_name">
+      </div>
+      <div class="mb-3">
+        <label for="manufacturer_url" class="form-label">Manufacturer Website URL</label>
+        <input type="text" class="form-control" id="manufacturer_url" name="manufacturer_url"
+          aria-describedby="manufacturer_url">
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

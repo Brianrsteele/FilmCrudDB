@@ -3,25 +3,34 @@
 {% block body %}
 
 <section class="m-5" id="manufacturer_table">
-  <div class="container m-5">
+  <div class="container m-5 justify-content-center">
     <h1>Manufacturers</h1>
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Manufacturer Name</th>
-            <th scope="col">URL</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for manufacturer in manufacturers_info %}
-          <tr>
-            <td>{{ manufacturer[0] }}</td>
-            <td><a href="{{ manufacturer[1] }}">{{ manufacturer[1] }}</a></td>
-          </tr>
-            {% endfor %}
-          
-        </tbody>
-      </table>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Manufacturer Name</th>
+          <th scope="col">Edit/Delete</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {% for manufacturer in manufacturers_info %}
+        <tr>
+          <td><a href="{{ manufacturer[1] }}">{{ manufacturer[0] }}</a></td>
+          <td><a class="btn btn-outline-primary" href="#" role="button">Edit</a>
+            <a class="btn btn-outline-danger" href="#" role="button">Delete</a></td>
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+  <div class="container col-6">
+    <div class="row justify-content-center">
+      <div class="col-6">
+      <a class="btn btn-outline-primary" href="{{ url_for('add_manufacturer') }}" role="button">Add manufacturer</a>
     </div>
-  </section>
-  {% endblock %}
+    </div>
+  </div>
+</section>
+{% endblock %}
