@@ -68,28 +68,33 @@ def add_manufacturer():
 
 # ----------------------- Process Pages ------------------------
 
-@app.route('/processes')
+@app.route('/processes', methods = ['GET','POST'])
 def processes():
-    # render a list of all of the processes in the database
-    process_info = query_process_info()
-    return render_template('process.html', process_info=process_info, title='Processes')
-
-@app.route('/add_process', methods = ['GET','POST'])
-def add_process():
-    # add a process to the database. If the request is a GET request,
-    # then render a form to collect process inforamation
-    # if it is a POST request, then send process details to
-    # insert method
+    # render a list of all of the processes in the database if 
+    # the request is a GET request.
+    # if the request is a POST request,
+    # print the success message with the process
+    # added
     if request.method == 'GET':
-        return render_template('add_process.html', title='Add Process')
+        process_info = query_process_info()
+        return render_template('process.html', process_info=process_info, title='Processes')
     else:
         process_details = (
             request.form['process_name'],
             request.form['process_wiki_url']
         )
         insert_process(process_details)
-        return render_template('add_process_success.html', title='Successfully Added Process')
+        process_info = query_process_info()
+        title = 'Successfully added ' + process_details[0]
+        success = True
+        process_name=process_details[0]
+        return render_template('process.html', process_info=process_info, title=title, success=success, process_name=process_name)
 
+@app.route('/add_process')
+def add_process():
+    # add a process to the database. 
+    return render_template('add_process.html', title='Add Process')
+    
 
 # ------------------------------------------------------------------------------
 #                          Querries

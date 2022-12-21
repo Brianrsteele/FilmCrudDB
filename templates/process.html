@@ -3,34 +3,41 @@
 {% block body %}
 
 <section class="m-5" id="manufacturer_table">
-<div class="container m-5 justify-content-center">
-  <h1>Processes</h1>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Process Name</th>
-        <th scope="col">Edit/Delete</th>
+  <div class="container m-5 justify-content-center">
+    <h1>Processes</h1>
+    <table class="table">
 
-      </tr>
-    </thead>
-    <tbody>
-      {% for process in process_info %}
-      <tr>
-        <td><a href="{{ process[1] }}">{{ process[0] }}</a></td>
-        <td><a class="btn btn-outline-primary" href="#" role="button">Edit</a>
-          <a class="btn btn-outline-danger" href="#" role="button">Delete</a></td>
-      </tr>
-      {% endfor %}
+      {% if success == True %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ process_name }} successfully added to Processes.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
 
-    </tbody>
-  </table>
-</div>
-<div class="container col-6">
-  <div class="row justify-content-center">
-    <div class="col-6">
-    <a class="btn btn-outline-primary" href="{{ url_for('add_process') }}" role="button">Add Process</a>
+      <thead>
+        <tr>
+          <th scope="col">Process Name</th>
+          <th scope="col">Action</th>
+          <th scope="col">URL</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {% for process in process_info %}
+        <tr>
+          <td>{{ process[0] }}</td>
+          <td><a href="#" role="button" class="link-dark"><i class="bi-pencil-square"></i></a>
+            <a href="#" role="button" class="link-dark"><i class="bi-trash-fill"></i></a>
+          </td>
+          <td><a href="{{ process[1] }}" role="button" class="link-dark"><i class="bi-link-45deg"></i></td>
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+    <a class="btn btn-secondary" href="{{ url_for('add_process') }}" role="button">Add process</a>
   </div>
+
   </div>
-</div>
 </section>
-  {% endblock %}
+{% endblock %}
