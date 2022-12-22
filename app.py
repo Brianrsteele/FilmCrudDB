@@ -3,6 +3,7 @@ import sqlite3
 
 # https://youtu.be/cGWP9FRMQLw
 # https://youtu.be/hfPLX9fufpo
+# https://stackoverflow.com/questions/7478366/create-dynamic-urls-in-flask-with-url-for
 
 app = Flask(__name__)
 
@@ -76,9 +77,10 @@ def processes():
     # print the success message with the process
     # added
     if request.method == 'GET':
+        process_id = request.args.get('process_id')
         process_info = query_process_info()
-        return render_template('process.html', process_info=process_info, title='Processes')
-    else:
+        return render_template('process/process.html', process_info=process_info, title='Processes')
+    if request.method == 'POST':
         process_details = (
             request.form['process_name'],
             request.form['process_wiki_url']
@@ -86,14 +88,28 @@ def processes():
         insert_process(process_details)
         process_info = query_process_info()
         title = 'Successfully added ' + process_details[0]
-        success = True
+        add_success = True
         process_name=process_details[0]
-        return render_template('process.html', process_info=process_info, title=title, success=success, process_name=process_name)
+        return render_template('process/process.html', process_info=process_info, title=title, add_success=add_success, process_name=process_name)
 
 @app.route('/add_process')
 def add_process():
     # add a process to the database. 
-    return render_template('add_process.html', title='Add Process')
+    return render_template('process/add_process.html', title='Add Process')
+
+@app.route('/<process_id>/delete_process', methods=['GET','POST'])
+def delete_process(process_id):  
+    
+    # use process_details to get the name of the process
+    process_details = query_process_detail(process_id)
+    process_name = process_details[1]
+    remove_process(process_id)  
+    # use process info to populate the table
+    process_info = query_process_info()
+    title = 'Successfully deleted ' + process_id
+    delete_success = True
+    return render_template('process/process.html', process_info=process_info, title=title, delete_success=delete_success, 
+                                            proces_id=process_id, process_name=process_name)
     
 
 # ------------------------------------------------------------------------------
@@ -165,13 +181,27 @@ def query_process_info():
     connection = sqlite3.connect(db_file)
     cursor = connection.cursor()
     cursor.execute("""
-    SELECT process_name, process_wiki_url FROM process
+    SELECT process_id, process_name, process_wiki_url FROM process
     ORDER BY process_name;
     """)
     manufacturer_info = cursor.fetchall()
     connection.commit()
     connection.close()
     return manufacturer_info
+
+def query_process_detail(process_id):
+    db_file = 'filmDB.db'
+    connection = sqlite3.connect(db_file)
+    cursor = connection.cursor()
+    sql_execute_string = """
+    SELECT * FROM process
+    WHERE process_id = (?)
+    """
+    cursor.execute(sql_execute_string, (process_id,))
+    process_details = cursor.fetchone()
+    connection.commit()
+    connection.close()
+    return process_details
 
 def insert_process(process_details):
     # Insert details for a new process into db.
@@ -187,7 +217,20 @@ def insert_process(process_details):
     connection.commit()
     connection.close()
 
-
+def remove_process(process_id):
+    # Insert details for a new process into db.
+    db_file = 'filmDB.db'
+    connection = sqlite3.connect(db_file)
+    cursor = connection.cursor()
+    
+    sql_execute_string = """
+    DELETE FROM process WHERE process_id = (?)
+    """
+    # second parameter of cursor.execute must be a tuple
+    # force it with an extra , if you have to.
+    cursor.execute(sql_execute_string, (process_id,))
+    connection.commit()
+    connection.close()
 
 if __name__ == '__main__':
     app.run()

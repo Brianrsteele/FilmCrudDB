@@ -7,29 +7,35 @@
     <h1>Processes</h1>
     <table class="table">
 
-      {% if success == True %}
+      {% if add_success == True %}
       <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ process_name }} successfully added to Processes.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% elif delete_success == True %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ process_name }} successfully deleted from Processes.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       {% endif %}
 
       <thead>
         <tr>
+          <th scope="col">ID</th>
           <th scope="col">Process Name</th>
           <th scope="col">Action</th>
           <th scope="col">URL</th>
-
         </tr>
       </thead>
       <tbody>
         {% for process in process_info %}
         <tr>
           <td>{{ process[0] }}</td>
+          <td>{{ process[1] }}</td>
           <td><a href="#" role="button" class="link-dark"><i class="bi-pencil-square"></i></a>
-            <a href="#" role="button" class="link-dark"><i class="bi-trash-fill"></i></a>
+            <a href="{{ url_for('delete_process', process_id=process[0]) }}" role="button" class="link-dark"><i class="bi-trash-fill"></i></a>
           </td>
-          <td><a href="{{ process[1] }}" role="button" class="link-dark"><i class="bi-link-45deg"></i></td>
+          <td><a href="{{ process[2] }}" role="button" class="link-dark"><i class="bi-link-45deg"></i></td>
         </tr>
         {% endfor %}
 
