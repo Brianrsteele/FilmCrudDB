@@ -49,7 +49,7 @@ def add_film():
 def manufacturers():
     # Render a list of all of the manufacturers
     manufacturers_info = query_manufacturer_info()
-    return render_template('manufacturers.html', manufacturers_info=manufacturers_info, title='Manufacturers')
+    return render_template('manufacturer/manufacturers.html', manufacturers_info=manufacturers_info, title='Manufacturers')
 
 @app.route('/add_manufacturer', methods = ['GET', 'POST'])
 def add_manufacturer():
@@ -58,14 +58,14 @@ def add_manufacturer():
     # if it is a POST request, then send manufacturer details to
     # insert method
     if request.method == 'GET':
-        return render_template('add_manufacturer.html', title='Add Manufacturer')
+        return render_template('manufacturer/add_manufacturer.html', title='Add Manufacturer')
     else:
         manufacturer_details = (
             request.form['manufacturer_name'],
             request.form['manufacturer_url'],
         )
         insert_manufacturer(manufacturer_details)
-        return render_template('add_manufacturer_success.html', title='Successfully Added Manufacturer')
+        return render_template('manufacturer/add_manufacturer_success.html', title='Successfully Added Manufacturer')
 
 # ----------------------- Process Pages ------------------------
 
@@ -81,16 +81,33 @@ def processes():
         process_info = query_process_info()
         return render_template('process/process.html', process_info=process_info, title='Processes')
     if request.method == 'POST':
-        process_details = (
-            request.form['process_name'],
-            request.form['process_wiki_url']
-        )
-        insert_process(process_details)
-        process_info = query_process_info()
-        title = 'Successfully added ' + process_details[0]
-        add_success = True
-        process_name=process_details[0]
-        return render_template('process/process.html', process_info=process_info, title=title, add_success=add_success, process_name=process_name)
+        # this is an edit from edit_process.html
+        if 'process_id' in request.form:
+            print('process id, editing.')
+            process_details = (
+                request.form['process_id'],
+                request.form['process_name'],
+                request.form['process_wiki_url']
+            )
+            update_process(process_details)
+            process_info = query_process_info()
+            title = 'Successfully edited ' + process_details[1]
+            edit_success = True
+            process_name=process_details[1]
+            return render_template('process/process.html', process_info=process_info, title=title, edit_success=edit_success, process_name=process_name)
+        # this is an add from add_process.html
+        if 'process_id' not in request.form:
+            print('no process id, adding')
+            process_details = (
+                request.form['process_name'],
+                request.form['process_wiki_url']
+            )
+            insert_process(process_details)
+            process_info = query_process_info()
+            title = 'Successfully added ' + process_details[0]
+            add_success = True
+            process_name=process_details[0]
+            return render_template('process/process.html', process_info=process_info, title=title, add_success=add_success, process_name=process_name)
 
 @app.route('/add_process')
 def add_process():
@@ -110,7 +127,12 @@ def delete_process(process_id):
     delete_success = True
     return render_template('process/process.html', process_info=process_info, title=title, delete_success=delete_success, 
                                             proces_id=process_id, process_name=process_name)
-    
+
+@app.route('/<process_id>/edit_process')  
+def edit_process(process_id):
+    # update a process to the database
+    process_details = query_process_detail(process_id)
+    return render_template('process/edit_process.html', process_details=process_details)
 
 # ------------------------------------------------------------------------------
 #                          Querries
@@ -229,6 +251,22 @@ def remove_process(process_id):
     # second parameter of cursor.execute must be a tuple
     # force it with an extra , if you have to.
     cursor.execute(sql_execute_string, (process_id,))
+    connection.commit()
+    connection.close()
+
+def update_process(process_details):
+    # Insert details for a new process into db.
+    db_file = 'filmDB.db'
+    connection = sqlite3.connect(db_file)
+    cursor = connection.cursor()
+    
+    sql_execute_string = """
+    UPDATE process 
+    SET process_name = (?), process_wiki_url = (?) WHERE process_id = (?);
+    """
+    # second parameter of cursor.execute must be a tuple
+    # force it with an extra , if you have to.
+    cursor.execute(sql_execute_string, (process_details[1], process_details[2], process_details[0] ))
     connection.commit()
     connection.close()
 

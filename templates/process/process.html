@@ -17,6 +17,11 @@
         {{ process_name }} successfully deleted from Processes.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
+      {% elif edit_success == True %}
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ process_name }} successfully edited in Processes.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
       {% endif %}
 
       <thead>
@@ -32,7 +37,7 @@
         <tr>
           <td>{{ process[0] }}</td>
           <td>{{ process[1] }}</td>
-          <td><a href="#" role="button" class="link-dark"><i class="bi-pencil-square"></i></a>
+          <td><a href="{{ url_for('edit_process', process_id=process[0]) }}" role="button" class="link-dark"><i class="bi-pencil-square"></i></a>
             <a href="{{ url_for('delete_process', process_id=process[0]) }}" role="button" class="link-dark"><i class="bi-trash-fill"></i></a>
           </td>
           <td><a href="{{ process[2] }}" role="button" class="link-dark"><i class="bi-link-45deg"></i></td>
