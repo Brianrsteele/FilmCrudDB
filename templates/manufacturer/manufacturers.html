@@ -3,32 +3,52 @@
 {% block body %}
 
 <section class="m-5" id="manufacturer_table">
-  <div class="container m-5">
+  <div class="container m-5 justify-content-center">
     <h1>Manufacturers</h1>
-    
     <table class="table">
+
+      {% if add_success == True %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ manufacturer_name }} successfully added to Manufacturers.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% elif delete_success == True %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ manufacturer_name }} successfully deleted from Manufacturers.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% elif edit_success == True %}
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ manufacturer_name }} successfully edited in Manufacturers.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+
       <thead>
         <tr>
+          <th scope="col">ID</th>
           <th scope="col">Manufacturer Name</th>
-          <th scope="col">Action/th>
+          <th scope="col">Action</th>
           <th scope="col">URL</th>
-
         </tr>
       </thead>
       <tbody>
-        {% for manufacturer in manufacturers_info %}
+        {% for manufacturer in manufacturer_info %}
         <tr>
           <td>{{ manufacturer[0] }}</td>
-          <td><a href="#" role="button" class="link-dark"><i class="bi-pencil-square"></i></a>
-            <a href="#" role="button" class="link-dark"><i class="bi-trash-fill"></i></a>
+          <td>{{ manufacturer[1] }}</td>
+          <td><a href="{{ url_for('edit_manufacturer', manufacturer_id=manufacturer[0]) }}" role="button" class="link-dark"><i class="bi-pencil-square"></i></a>
+            <a href="{{ url_for('delete_manufacturer', manufacturer_id=manufacturer[0]) }}" role="button" class="link-dark"><i class="bi-trash-fill"></i></a>
           </td>
-          <td><a href="{{ manufacturer[1] }}" role="button" class="link-dark"><i class="bi-link-45deg"></i></td>
+          <td><a href="{{ manufacturer[2] }}" role="button" class="link-dark"><i class="bi-link-45deg"></i></td>
         </tr>
         {% endfor %}
 
       </tbody>
     </table>
     <a class="btn btn-secondary" href="{{ url_for('add_manufacturer') }}" role="button">Add manufacturer</a>
+  </div>
+
   </div>
 </section>
 {% endblock %}

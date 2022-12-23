@@ -21,7 +21,7 @@ def home_page():
 @app.route('/film')
 def film():
     # render a list of all of the films in database.
-    film_info = query_film_info()
+    film_info = film_list_query()
     return render_template('film.html', film_info=film_info, title='Film')
 
 @app.route('/add_film', methods = ['GET','POST'])
@@ -40,32 +40,72 @@ def add_film():
             request.form['process_id'],
             request.form['film_url']
         )
-        insert_film(film_details)
+        film_insert_query(film_details)
         return render_template('add_film_success.html', title='Successfully Added Film')
 
 # ------------------------ Manufacturer Pages ------------------------
 
-@app.route('/manufacturers')
+@app.route('/manufacturers', methods = ['GET','POST'])
 def manufacturers():
-    # Render a list of all of the manufacturers
-    manufacturers_info = query_manufacturer_info()
-    return render_template('manufacturer/manufacturers.html', manufacturers_info=manufacturers_info, title='Manufacturers')
-
-@app.route('/add_manufacturer', methods = ['GET', 'POST'])
-def add_manufacturer():
-    # addmanufacturer to the database. If the request is a GET request,
-    # then render a form to collect manufacturer inforamation
-    # if it is a POST request, then send manufacturer details to
-    # insert method
+    # render a list of all of the manufacturers in the database if 
+    # the request is a GET request.
+    # if the request is a POST request,
+    # print the success message with the manufacturer
+    # added
     if request.method == 'GET':
-        return render_template('manufacturer/add_manufacturer.html', title='Add Manufacturer')
-    else:
-        manufacturer_details = (
-            request.form['manufacturer_name'],
-            request.form['manufacturer_url'],
-        )
-        insert_manufacturer(manufacturer_details)
-        return render_template('manufacturer/add_manufacturer_success.html', title='Successfully Added Manufacturer')
+        manufacturer_id = request.args.get('manufacturer_id')
+        manufacturer_info = manufacturer_list_query()
+        return render_template('manufacturer/manufacturers.html', manufacturer_info=manufacturer_info, title='Manufacturers')
+    if request.method == 'POST':
+        # this is an edit from edit_process.html
+        if 'manufacturer_id' in request.form:
+            manufacturer_details = (
+                request.form['manufacturer_id'],
+                request.form['manufacturer_name'],
+                request.form['manufacturer_url']
+            )
+            manufacturer_update_query(manufacturer_details)
+            manufacturer_info = manufacturer_list_query()
+            title = 'Successfully edited ' + manufacturer_details[1]
+            edit_success = True
+            manufacturer_name=manufacturer_details[1]
+            return render_template('manufacturer/manufacturers.html', manufacturer_info=manufacturer_info, title=title, edit_success=edit_success, manufacturer_name=manufacturer_name)
+        # this is an add from add_process.html
+        if 'manufacturer_id' not in request.form:
+            manufacturer_details = (
+                request.form['manufacturer_name'],
+                request.form['manufacturer_url']
+            )
+            manufacturer_insert_query(manufacturer_details)
+            manufacturer_info = manufacturer_list_query()
+            title = 'Successfully added ' + manufacturer_details[0]
+            add_success = True
+            manufacturer_name=manufacturer_details[0]
+            return render_template('manufacturer/manufacturers.html', manufacturer_info=manufacturer_info, title=title, add_success=add_success, manufacturer_name=manufacturer_name)
+
+@app.route('/add_manufacturer')
+def add_manufacturer():
+    # add a process to the database. 
+    return render_template('manufacturer/add_manufacturer.html', title='Add Manufacturer')
+
+@app.route('/<manufacturer_id>/delete_manufacturer', methods=['GET','POST'])
+def delete_manufacturer(manufacturer_id):  
+    # use manufacturer_details to get the name of the process
+    manufacturer_details = manufacturer_detail_query(manufacturer_id)
+    manufacturer_name = manufacturer_details[1]
+    manufacturer_remove_query(manufacturer_id)  
+    # use manufacturer info to populate the table
+    manufacturer_info = manufacturer_list_query()
+    title = 'Successfully deleted ' + manufacturer_id
+    delete_success = True
+    return render_template('manufacturer/manufacturers.html', manufacturer_info=manufacturer_info, title=title, delete_success=delete_success, 
+                                        manufacturer_id=manufacturer_id, manufacturer_name=manufacturer_name)
+
+@app.route('/<manufacturer_id>/edit_manufacturer')  
+def edit_manufacturer(manufacturer_id):
+    # update a process to the database
+    manufacturer_details = manufacturer_detail_query(manufacturer_id)
+    return render_template('manufacturer/edit_manufacturer.html', manufacturer_details=manufacturer_details)
 
 # ----------------------- Process Pages ------------------------
 
@@ -78,7 +118,7 @@ def processes():
     # added
     if request.method == 'GET':
         process_id = request.args.get('process_id')
-        process_info = query_process_info()
+        process_info = process_list_query()
         return render_template('process/process.html', process_info=process_info, title='Processes')
     if request.method == 'POST':
         # this is an edit from edit_process.html
@@ -89,8 +129,8 @@ def processes():
                 request.form['process_name'],
                 request.form['process_wiki_url']
             )
-            update_process(process_details)
-            process_info = query_process_info()
+            process_update_query(process_details)
+            process_info = process_list_query()
             title = 'Successfully edited ' + process_details[1]
             edit_success = True
             process_name=process_details[1]
@@ -102,8 +142,8 @@ def processes():
                 request.form['process_name'],
                 request.form['process_wiki_url']
             )
-            insert_process(process_details)
-            process_info = query_process_info()
+            process_insert_query(process_details)
+            process_info = process_list_query()
             title = 'Successfully added ' + process_details[0]
             add_success = True
             process_name=process_details[0]
@@ -116,22 +156,21 @@ def add_process():
 
 @app.route('/<process_id>/delete_process', methods=['GET','POST'])
 def delete_process(process_id):  
-    
     # use process_details to get the name of the process
-    process_details = query_process_detail(process_id)
+    process_details = process_detail_query(process_id)
     process_name = process_details[1]
-    remove_process(process_id)  
+    process_remove_query(process_id)  
     # use process info to populate the table
-    process_info = query_process_info()
+    process_info = process_list_query()
     title = 'Successfully deleted ' + process_id
     delete_success = True
     return render_template('process/process.html', process_info=process_info, title=title, delete_success=delete_success, 
-                                            proces_id=process_id, process_name=process_name)
+                                            process_id=process_id, process_name=process_name)
 
 @app.route('/<process_id>/edit_process')  
 def edit_process(process_id):
     # update a process to the database
-    process_details = query_process_detail(process_id)
+    process_details = process_detail_query(process_id)
     return render_template('process/edit_process.html', process_details=process_details)
 
 # ------------------------------------------------------------------------------
@@ -140,7 +179,7 @@ def edit_process(process_id):
 
 # ----------------------- Film Querries ------------------------
 
-def query_film_info():
+def film_list_query():
     db_file = 'filmDB.db'
     connection = sqlite3.connect(db_file)
     cursor = connection.cursor()
@@ -155,7 +194,7 @@ def query_film_info():
     connection.close()
     return film_info
 
-def insert_film(film_details):
+def film_insert_query(film_details):
     db_file = 'filmDB.db'
     connection = sqlite3.connect(db_file)
     cursor = connection.cursor()
@@ -170,12 +209,12 @@ def insert_film(film_details):
 
 # ----------------------- Manufacturer Querries ------------------------
 
-def query_manufacturer_info():
+def manufacturer_list_query():
     db_file = 'filmDB.db'
     connection = sqlite3.connect(db_file)
     cursor = connection.cursor()
     cursor.execute("""
-    SELECT manufacturer_name, manufacturer_url FROM manufacturer
+    SELECT manufacturer_id, manufacturer_name, manufacturer_url FROM manufacturer
     ORDER BY manufacturer_name;
     """)
     manufacturer_info = cursor.fetchall()
@@ -183,7 +222,21 @@ def query_manufacturer_info():
     connection.close()
     return manufacturer_info
 
-def insert_manufacturer(manufacturer_details):
+def manufacturer_detail_query(manufacturer_id):
+    db_file = 'filmDB.db'
+    connection = sqlite3.connect(db_file)
+    cursor = connection.cursor()
+    sql_execute_string = """
+    SELECT * FROM manufacturer
+    WHERE manufacturer_id = (?)
+    """
+    cursor.execute(sql_execute_string, (manufacturer_id,))
+    process_details = cursor.fetchone()
+    connection.commit()
+    connection.close()
+    return process_details
+
+def manufacturer_insert_query(manufacturer_details):
     db_file = 'filmDB.db'
     connection = sqlite3.connect(db_file)
     cursor = connection.cursor()
@@ -196,9 +249,40 @@ def insert_manufacturer(manufacturer_details):
     connection.commit()
     connection.close()
 
+def manufacturer_remove_query(manufacturer_id):
+    # Insert details for a new process into db.
+    db_file = 'filmDB.db'
+    connection = sqlite3.connect(db_file)
+    cursor = connection.cursor()
+    
+    sql_execute_string = """
+    DELETE FROM manufacturer WHERE manufacturer_id = (?)
+    """
+    # second parameter of cursor.execute must be a tuple
+    # force it with an extra , if you have to.
+    cursor.execute(sql_execute_string, (manufacturer_id,))
+    connection.commit()
+    connection.close()
+
+def manufacturer_update_query(manufacturer_details):
+    # Insert details for a new process into db.
+    db_file = 'filmDB.db'
+    connection = sqlite3.connect(db_file)
+    cursor = connection.cursor()
+    
+    sql_execute_string = """
+    UPDATE manufacturer 
+    SET manufacturer_name = (?), manufacturer_url = (?) WHERE manufacturer_id = (?);
+    """
+    # second parameter of cursor.execute must be a tuple
+    # force it with an extra , if you have to.
+    cursor.execute(sql_execute_string, (manufacturer_details[1], manufacturer_details[2], manufacturer_details[0] ))
+    connection.commit()
+    connection.close()
+
 # ----------------------- Process Querries ------------------------
 
-def query_process_info():
+def process_list_query():
     db_file = 'filmDB.db'
     connection = sqlite3.connect(db_file)
     cursor = connection.cursor()
@@ -211,7 +295,7 @@ def query_process_info():
     connection.close()
     return manufacturer_info
 
-def query_process_detail(process_id):
+def process_detail_query(process_id):
     db_file = 'filmDB.db'
     connection = sqlite3.connect(db_file)
     cursor = connection.cursor()
@@ -225,7 +309,7 @@ def query_process_detail(process_id):
     connection.close()
     return process_details
 
-def insert_process(process_details):
+def process_insert_query(process_details):
     # Insert details for a new process into db.
     db_file = 'filmDB.db'
     connection = sqlite3.connect(db_file)
@@ -239,7 +323,7 @@ def insert_process(process_details):
     connection.commit()
     connection.close()
 
-def remove_process(process_id):
+def process_remove_query(process_id):
     # Insert details for a new process into db.
     db_file = 'filmDB.db'
     connection = sqlite3.connect(db_file)
@@ -254,7 +338,7 @@ def remove_process(process_id):
     connection.commit()
     connection.close()
 
-def update_process(process_details):
+def process_update_query(process_details):
     # Insert details for a new process into db.
     db_file = 'filmDB.db'
     connection = sqlite3.connect(db_file)
