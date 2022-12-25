@@ -184,7 +184,7 @@ def film_list_query():
     connection = sqlite3.connect(db_file)
     cursor = connection.cursor()
     cursor.execute("""
-    SELECT  manufacturer.manufacturer_name,film.film_name,  film.film_iso, process.process_name, film.film_url
+    SELECT  film.film_id, manufacturer.manufacturer_name, film.film_name, film.film_iso, process.process_name, film.film_url
     FROM film INNER JOIN manufacturer ON film.manufacturer_id = manufacturer.manufacturer_id
     INNER JOIN process ON film.process_id = process.process_id
     ORDER BY film.film_name;

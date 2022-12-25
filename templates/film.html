@@ -3,35 +3,41 @@
 {% block body %}
 
 <section class="m-5" id="film_table">
-    <div class="container m-5">
-      <h1>Film</h1>
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Manufacturer</th>
-            <th scope="col">Film Name</th>
-            <th scope="col">ISO</th>
-            <th scope="col">Process</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for film in film_info %}
-          <tr>
-            <td>{{ film[0] }}</td>
-            {% if not film[4] %}
-            <td>{{ film[1] }}</td>
-            {% else %}
-            <td><a href="{{ film[4] }}">{{ film[1] }}</a></td>
-            {% endif %}
-            <td>{{ film[2] }}</td>
-            <td>{{ film[3] }} 
-              
-            </td>
-          </tr>
-            {% endfor %}
-          
-        </tbody>
-      </table>
-    </div>
-  </section>
-  {% endblock %}
+  <div class="container m-5">
+    <h1>Film</h1>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Manufacturer</th>
+          <th scope="col">Film Name</th>
+          <th scope="col">ISO</th>
+          <th scope="col">Process</th>
+          <th scope="col">Action</th>
+          <th scope="col">URL</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for film in film_info %}
+        <tr>
+          <td>{{ film[0] }}</td>
+          <td>{{ film[1] }}</td>
+          <td>{{ film[2] }}</td>
+          <td>{{ film[3] }}</td>
+          <td>{{ film[4] }}</td>
+          <td><a href="#" role="button" class="link-dark"><i class="bi-pencil-square"></i></a>
+            <a href="#" role="button" class="link-dark"><i class="bi-trash-fill"></i></a>
+          </td>
+          {% if film[5] %}
+          <td><a href="{{ film[5] }}" role="button" class="link-dark"><i class="bi-link-45deg"></i></td>
+          {% else %}
+          <td>&nbsp;</td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
